@@ -2,8 +2,11 @@ package com.lnw.template.controller;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +27,8 @@ public class HomeController {
 	@Autowired
 	private HomeService homeService;
 	
-	@RequestMapping(value = "getBase")
-	public void getBase(@RequestParam Map<String, Object> params,  Model model) throws Exception {
-		logger.info("계정 정보");
-		
-		//service 호출
-		model.addAttribute("list", homeService.getBaseList(params));
-	}
-	
 	@RequestMapping(value = "home")
-	public String home(Locale locale, Model model) {
+	public void home(Locale locale, HttpServletRequest request, @RequestParam Map<String, Object> params, Model model) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
 		Date date = new Date();
@@ -41,8 +36,16 @@ public class HomeController {
 		String formattedDate = dateFormat.format(date);
 		
 		model.addAttribute("serverTime", formattedDate );
+	}
+	
+	//데이터 json요청
+	@RequestMapping(value = "getBase.json")
+	public void getBase(Locale locale, HttpServletRequest request, @RequestParam Map<String, Object> params, Model model) throws Exception {
+		logger.info("정보");
 		
-		return "home";
+		//service 호출
+		List list = homeService.getBaseList(params);
+		model.addAttribute("list", list);
 	}
 	
 }
